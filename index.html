@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OUR DC Team Check Prototype</title>
+  <style>
+    :root{--black:#111;--white:#fff;--paper:#f7f4ed;--muted:#666;--border:rgba(17,17,17,.14);--agency:#7c3aed;--care:#0b4dba;--pacing:#f9d400;--trust:#e53935;--alignment:#2e7d32;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--black);background:var(--paper)}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 20%,rgba(11,77,186,.12),transparent 34%),radial-gradient(circle at 80% 12%,rgba(249,212,0,.16),transparent 30%),radial-gradient(circle at 75% 90%,rgba(229,57,53,.1),transparent 34%),var(--paper)}button,input{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:grid;place-items:center;padding:28px}.topbar{position:fixed;top:24px;left:28px;right:28px;display:flex;justify-content:space-between;align-items:center;z-index:10;pointer-events:none}.brand,.progress{pointer-events:auto}.brand{display:flex;align-items:center;gap:10px;font-weight:950;letter-spacing:.08em}.mark{min-width:58px;height:42px;padding:0 10px;border-radius:14px;background:#111;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:950;white-space:nowrap}.card{width:min(920px,100%);background:rgba(255,255,255,.9);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:34px;padding:clamp(28px,6vw,64px);box-shadow:0 24px 80px rgba(17,17,17,.14);animation:enter .38s cubic-bezier(.2,.8,.2,1)}.question-card{border-top:12px solid var(--accent)}@keyframes enter{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}.eyebrow{margin:0 0 10px;text-transform:uppercase;letter-spacing:.16em;font-size:.78rem;font-weight:950;color:var(--muted)}h1{margin:0;font-size:clamp(2.3rem,8vw,5.6rem);line-height:.92;letter-spacing:-.07em}h2{margin:20px 0 0;font-size:clamp(1.45rem,4vw,2.7rem);line-height:1.02;letter-spacing:-.04em}.lead{font-size:clamp(1.05rem,2.4vw,1.32rem);line-height:1.5;color:#2f2f2f;max-width:760px}.btn{border:2px solid var(--black);border-radius:999px;padding:14px 22px;font-weight:950;background:#fff;color:#111;transition:transform .16s ease,box-shadow .16s ease}.btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(17,17,17,.12)}.btn.primary{background:#111;color:#fff}.button-row,.nav-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}.nav-row{justify-content:space-between}.answer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:34px}.answer{min-height:148px;text-align:left;background:#fff;border:2px solid rgba(17,17,17,.14);border-radius:22px;padding:22px;display:grid;align-content:start;gap:10px}.answer.selected{border-color:var(--accent);box-shadow:0 16px 34px rgba(17,17,17,.12);transform:translateY(-3px)}.answer strong{font-size:1.25rem}.answer span{color:var(--muted);line-height:1.35}.text-answer{display:grid;gap:10px;margin-top:34px;font-weight:900}.text-answer input{width:100%;padding:18px 20px;border-radius:18px;border:2px solid #111;background:#fff;outline:none}.notes-answer{display:grid;gap:10px;margin-top:22px;font-weight:900}.notes-answer textarea{width:100%;min-height:110px;resize:vertical;padding:18px 20px;border-radius:18px;border:2px solid rgba(17,17,17,.3);background:#fff;outline:none;font:inherit}.notes-answer textarea:focus{border-color:var(--accent);box-shadow:0 10px 24px rgba(17,17,17,.08)}.progress{font-weight:950;color:#444}.rhythm{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:9;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;max-width:880px;padding:10px 16px;border-radius:999px;background:rgba(247,244,237,.92);backdrop-filter:blur(10px);box-shadow:0 10px 28px rgba(17,17,17,.08)}.rhythm-item{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:950;color:#666;opacity:.75;line-height:1.1}.rhythm-item.active{color:#111;opacity:1}.dot{width:16px;height:16px;border-radius:999px;background:var(--color);flex:0 0 auto}.result-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:28px}.result-cell,.insight{background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:22px;padding:18px}.result-cell span{display:block;color:#666;font-weight:950;margin-bottom:8px}.result-cell strong{font-size:1.25rem}.badge{display:inline-flex;width:fit-content;margin-top:18px;border-radius:999px;padding:8px 14px;background:#111;color:#fff;font-weight:950}.insight{margin-top:14px}.source-note{font-size:.92rem;color:#666;margin-top:22px}.debug{margin-top:18px;color:#666;font-size:.85rem;white-space:pre-wrap;overflow:auto}.mini-rhythm{display:flex;gap:10px;flex-wrap:wrap;margin:28px 0}.mini-rhythm span{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;font-weight:850}@media(max-width:860px){.app{padding:132px 18px 24px}.topbar{position:absolute;left:18px;right:18px}.rhythm{position:static;transform:none;margin:22px auto 18px;border-radius:22px}.answer-grid,.result-grid{grid-template-columns:1fr}.card{border-radius:24px}}@media print{.topbar,.rhythm,.button-row,.nav-row .btn,.debug{display:none!important}.app{display:block;min-height:auto;padding:0}.card{box-shadow:none;border:none;border-radius:0;background:#fff}}
+  </style>
+</head>
+<body>
+  <div class="topbar"><div class="brand"><div class="mark">OUR DC</div><span>Teamwork is Power Management</span></div><div class="progress" id="progress"></div></div>
+  <div class="rhythm" id="rhythm"></div>
+  <div class="app"><main class="card" id="card"></main></div>
+<script>
+const RAW_TENDENCIES = `TendencyID,Tendency Name,Tendency Description
+YesYesYesYes,This works—and it is worth staying.,People feel well, connected, clear, and confident this can continue. This is sustainable coordination, not perfection—just viability.
+YesYesYesSometimes,"This works—for now, if we keep tending it.",People feel well, connected, and clear. It can continue, but only if we notice small strains early and adjust pace, care, and load-sharing.
+YesYesYesNo,Healthy and aligned—but overextended.,Everything feels good right now, but limits are not respected. Without adjustment, burnout is coming.
+YesYesSometimesYes,"Warm and capable, but not fully clear.",People feel well and connected, and things can keep going. Some parts of how we do this are still unclear, which creates small frictions that add up.
+YesYesSometimesSometimes,"Good and connected—clarity is patchy, future depends.",People feel well and bonded. Some roles and expectations are clear, others are not; it might continue if we strengthen agreements and share responsibility.
+YesYesSometimesNo,"Connected, but drifting toward strain.",People feel good and close, but the system is only partly clear. Because things depend on informal fixes, it will not last unless we clarify decisions and boundaries.
+YesYesNoYes,"Warm, ongoing, but unclear.",People feel well and connected, and things keep going—but ambiguity creates quiet strain and dependence on a few people.
+YesYesNoSometimes,"Warm, but unclear—future uncertain.",People feel okay and connected, but there is no shared clarity. It might continue, but only if ambiguity is reduced and responsibility is shared.
+YesYesNoNo,"It feels good, but it is messy and fragile.",Belonging and care are present, but confusion and lack of structure mean it cannot sustain.
+YesSometimesYesYes,Capable and clear—but togetherness is uneven.,People have capacity and the roles are clear, but connection is inconsistent. The work can continue, yet it will not feel shared unless we rebuild a real sense of togetherness.
+YesSometimesYesSometimes,Works in pockets—continuation is conditional.,Most people can cope and the structure is clear where it is used, but belonging is uneven. It might continue if we strengthen shared support.
+YesSometimesYesNo,"Clear roles, weak connection—cannot keep going.",People are okay and expectations are clear, but the group does not cohere. Without stronger relationships, it will not sustain.
+YesSometimesSometimesYes,Mostly okay—patchy belonging and patchy clarity.,People have capacity and some bonds exist, but clarity is inconsistent. It can continue, though it requires extra effort.
+YesSometimesSometimesSometimes,Half-held—depends on who shows up.,People are mostly okay, but both connection and clarity are uneven. It might continue, but it depends heavily on who is present.
+YesSometimesSometimesNo,Fragmented and fading.,People can cope, but togetherness and clarity are inconsistent. Without reconnecting and simplifying, it will not continue.
+YesSometimesNoYes,Okay people, unclear system—keeps going through improvisation.,Individuals are okay and there is some connection, but how this works is not shared. It can continue for a while but relies on improvisation.
+YesSometimesNoSometimes,Improvising in pockets—future uncertain.,People are okay and there is some warmth, but the system is unclear. It might continue if roles and expectations are clarified.
+YesSometimesNoNo,"Kind people, no shared understanding—will not last.",People feel okay and there are moments of connection, but without clarity it cannot sustain.
+YesNoYesYes,"Functional, but emotionally thin.",People feel okay and things work over time, but connection is minimal. Participation is transactional rather than relational.
+YesNoYesSometimes,Works on paper—future conditional.,People are okay and the structure is clear, but connection is thin. It might continue if trust and warmth are strengthened.
+YesNoYesNo,"I am fine, I know my role, but this is not a group.",Clear structure and personal capacity exist, but there is little belonging and no sense it will last.
+YesNoSometimesYes,Coping alone in a partially clear system.,People are okay individually, but they do not feel together and clarity is uneven. It can continue, but it feels isolating.
+YesNoSometimesSometimes,Everyone managing—connection missing and direction uneven.,People can cope, but there is little togetherness and only partial clarity. It might continue with stronger shared agreements.
+YesNoSometimesNo,"Role clarity uneven, connection absent, future doubtful.",People are okay, but we are not together and clarity is inconsistent. Without rebuilding connection, it will not last.
+YesNoNoYes,"I can cope, but this is not really shared.",People manage individually and the system continues, but there is no real togetherness or clarity.
+YesNoNoSometimes,Coping alone—unclear and unstable.,People can cope, but they feel alone and the system is unclear. It might continue through short-term effort.
+YesNoNoNo,"I am okay, but I am alone and lost.",Individuals feel regulated, but there is no shared meaning, no structure, and no future together.
+SometimesYesYesYes,Mostly working—some people are stretched.,The group feels connected and clear, but capacity is uneven. It can continue if workload is shared.
+SometimesYesYesSometimes,Connected and clear—but on a fragile edge.,We feel like a team and roles are clear, but energy is inconsistent. It might continue if pacing improves.
+SometimesYesYesNo,"Aligned, but capacity is breaking the system.",Connection and clarity are present, but people are not consistently okay. Without support, it will not sustain.
+SometimesYesSometimesYes,"Close, but coordination uneven.",People care and it can continue, but clarity and capacity vary.
+SometimesYesSometimesSometimes,"Warm, uneven, and dependent.",There is togetherness, but energy and clarity are inconsistent. It might continue with active tending.
+SometimesYesSometimesNo,"Caring, but too unclear to hold.",Connection exists, but capacity and clarity are unstable. It will not last without simplification.
+SometimesYesNoYes,"Together, but without shared clarity.",People care and momentum exists, but there is no shared understanding. It can continue temporarily.
+SometimesYesNoSometimes,"Close, confused, and conditional.",Connection is strong, but clarity is low and capacity uneven. It might continue with structure.
+SometimesYesNoNo,"We care, but it is chaotic.",There is care, but no clarity and limited capacity. It cannot sustain.
+SometimesSometimesYesYes,"Clear enough, but not fully held together.",The system is clear, but connection and energy are uneven. It can continue, though fragile.
+SometimesSometimesYesSometimes,Works in pockets—depends on who is steady.,Structure exists, but capacity fluctuates. It might continue with better support.
+SometimesSometimesYesNo,"Clear roles, unstable foundation.",There is a map, but connection and capacity are weak. It will not sustain.
+SometimesSometimesSometimesYes,"Uneven, but still moving.",Capacity, connection, and clarity are inconsistent, yet continuation is possible.
+SometimesSometimesSometimesSometimes,"Held by effort, not stability.",Everything is mixed. It might continue with stabilization.
+SometimesSometimesSometimesNo,Too unstable to carry forward.,With uneven capacity, connection, and clarity, it will not sustain.
+SometimesSometimesNoYes,Improvising together—sometimes.,Capacity and clarity are inconsistent, yet there is motion.
+SometimesSometimesNoSometimes,Unclear and fragile.,Connection and clarity are inconsistent. Continuation is uncertain.
+SometimesSometimesNoNo,Drifting toward breakdown.,Without clarity or stable capacity, it cannot sustain.
+SometimesNoYesYes,"Structured, but lonely and tiring.",Roles are clear, but connection is low and capacity uneven. It can continue, but at a cost.
+SometimesNoYesSometimes,"Clear on paper, unstable in practice.",Structure exists, but people are not consistently okay. It might continue with support.
+SometimesNoYesNo,"Clear roles, no connection, increasing strain.",Even with clarity, without connection and capacity it will not sustain.
+SometimesNoSometimesYes,Coping individually in partial clarity.,Capacity fluctuates, connection is low, clarity uneven. It can continue, but not comfortably.
+SometimesNoSometimesSometimes,"Managing separately, not fully shared.",It might continue, but it is precarious.
+SometimesNoSometimesNo,"Low connection, unstable clarity, collapse risk.",Without rebuilding connection and clarity, it will not last.
+SometimesNoNoYes,"Some days okay, mostly unclear.",Momentum exists, but without connection or clarity.
+SometimesNoNoSometimes,Trying to continue without shared understanding.,It might continue briefly through effort.
+SometimesNoNoNo,"Unstable, isolated, and unsustainable.",Without clarity, connection, or consistent capacity, it cannot last.
+NoYesYesYes,Strong and successful—at a human cost.,Trust, clarity, and continuation exist, but people are breaking down.
+NoYesYesSometimes,"Looks solid, feels rough.",It might continue, but people are not okay.
+NoYesYesNo,"Aligned, but running on exhaustion.",Without rest or support, it will not sustain.
+NoYesSometimesYes,"Close and functioning, but people are hurting.",Continuation is possible, but strain is high.
+NoYesSometimesSometimes,"Connected, strained, and conditional.",It might continue with major adjustment.
+NoYesSometimesNo,"Caring, but losing stability.",Without clarity and care, it will not last.
+NoYesNoYes,"We are close, but paying a price.",Momentum exists, but harm is present.
+NoYesNoSometimes,"Close, confused, and unstable.",It might continue briefly.
+NoYesNoNo,"We care, but everything is overwhelming.",Without clarity or capacity, it cannot sustain.
+NoSometimesYesYes,"Clear roles, uneven connection, people hurting.",Continuation possible with care.
+NoSometimesYesSometimes,"Clear enough, but exhausting.",It might continue if pressure is reduced.
+NoSometimesYesNo,"Clear structure, not enough support.",Without connection, it will not last.
+NoSometimesSometimesYes,Held together by effort—and it hurts.,Momentum exists, but strain is high.
+NoSometimesSometimesSometimes,Barely held and dependent.,Continuation uncertain.
+NoSometimesSometimesNo,Too unstable to sustain strain.,Without intervention, it will not last.
+NoSometimesNoYes,Improvised continuation at human cost.,Momentum continues, but harm increases.
+NoSometimesNoSometimes,"Confused, strained, and fragile.",It might continue briefly.
+NoSometimesNoNo,Overwhelmed and drifting apart.,Without reset, it cannot sustain.
+NoNoYesYes,"It works, but it hurts.",Clear structure and continuation exist, but people are burning out.
+NoNoYesSometimes,"It functions, but not safely.",Continuation possible only with relief.
+NoNoYesNo,"We know what to do, but it is falling apart.",Without connection and capacity, it will not last.
+NoNoSometimesYes,"Partial clarity, no connection, people strained.",Momentum exists but fragile.
+NoNoSometimesSometimes,Everyone struggling and unclear.,Continuation uncertain.
+NoNoSometimesNo,Unheld and unraveling.,Without clarity or connection, it will not last.
+NoNoNoYes,"It keeps going, but nobody is okay.",The system continues through pressure, not health.
+NoNoNoSometimes,"Still moving, but near collapse.",Continuation brief and unstable.
+NoNoNoNo,Nothing feels okay.,People are stressed, disconnected, confused, and exhausted. There is no shared understanding and no path forward.`;
+
+const SCORE={no:0,sometimes:1,yes:2};
+const LABEL={yes:'Yes',sometimes:'Sometimes',no:'No'};
+const QUESTIONS=[
+ {key:'agency',label:'Agency',question:'How are we associating?',helper:'Name the Team, group, association, circle, committee, partnership, or container that is actually in the room.',color:'var(--agency)',type:'text'},
+ {key:'care',label:'Care',question:'Is it healthy to be here?',helper:'Notice the conditions shaping participation before asking people to carry more.',color:'var(--care)',type:'choice'},
+ {key:'pacing',label:'Pacing',question:'Can this continue?',helper:'Notice capacity, support needs, timing, and whether the current pace can be sustained.',color:'var(--pacing)',type:'choice'},
+ {key:'trust',label:'Trust',question:'Are we together?',helper:'Notice connection, belonging, shared participation, and where responsibility may be concentrated.',color:'var(--trust)',type:'choice'},
+ {key:'alignment',label:'Alignment',question:'Do we know how this works?',helper:'Clarify what matters now, what can wait, and what needs to become visible.',color:'var(--alignment)',type:'choice'}
+];
+const OPTIONS=[
+ {value:'no',label:'No',helper:'This does not feel present enough right now.'},
+ {value:'sometimes',label:'Sometimes',helper:'This is partly present, uneven, or changing.'},
+ {value:'yes',label:'Yes',helper:'This feels present enough to continue.'}
+];
+let step=-1, answers={}, lastResult=null;
+const card=document.getElementById('card'), rhythm=document.getElementById('rhythm'), progress=document.getElementById('progress');
+function parseCSV(text){const rows=[];let row=[],cell='',q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cell+='"';i++}else if(c==='"'){q=!q}else if(c===','&&!q){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&n==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=''}else cell+=c}row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows}
+function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+const TEAM_STATES=Object.fromEntries(parseCSV(RAW_TENDENCIES).slice(1).map(r=>[r[0],{id:r[0],title:r[1],description:r[2]}]));
+function stateNumber(){return SCORE[answers.care]*27+SCORE[answers.trust]*9+SCORE[answers.alignment]*3+SCORE[answers.pacing]+1}
+function tendencyId(){return LABEL[answers.care]+LABEL[answers.trust]+LABEL[answers.alignment]+LABEL[answers.pacing]}
+function category(id){if(id>=73)return'Highest Stability';if(id>=55)return'Mixed Stability';if(id>=43)return'Strained but Functioning';if(id>=20)return'Fragile / At Risk';return'Breakdown / Collapse'}
+function formatResultDateTime(date){const mm=String(date.getMonth()+1).padStart(2,'0'),dd=String(date.getDate()).padStart(2,'0'),yyyy=date.getFullYear();let h=date.getHours();const ampm=h>=12?'PM':'AM';h=h%12||12;const min=String(date.getMinutes()).padStart(2,'0');return mm+'/'+dd+'/'+yyyy+' at '+h+':'+min+' '+ampm}
+function renderChrome(){if(step>=0&&step<QUESTIONS.length){progress.textContent=`${step+1}/${QUESTIONS.length}`;rhythm.innerHTML=QUESTIONS.map((q,i)=>`<div class="rhythm-item ${i===step?'active':''}"><span class="dot" style="--color:${q.color}"></span>${q.label}${i<QUESTIONS.length-1?' →':''}</div>`).join('')}else{progress.textContent='';rhythm.innerHTML=''}}
+function renderWelcome(){step=-1;renderChrome();card.className='card';card.innerHTML=`<p class="eyebrow">Team Check Prototype</p><h1>2 Minute Team Check</h1><p class="lead">Move through five questions in order. Name the Team, notice conditions, understand capacity, check connection, and clarify coordination.</p><div class="button-row"><button class="btn primary" id="begin">Begin Team Check</button></div>`;document.getElementById('begin').onclick=()=>{step=0;renderQuestion()}}
+function renderQuestion(){const q=QUESTIONS[step];renderChrome();card.className='card question-card';card.style.setProperty('--accent',q.color);const v=answers[q.key]||'', note=answers[q.key+'Note']||'';card.innerHTML=`<p class="eyebrow">${q.label}</p><h1>${esc(q.question)}</h1><p class="lead">${esc(q.helper)}</p>${q.type==='text'?`<label class="text-answer"><span>Team / group / association name</span><input id="text" value="${esc(v)}" placeholder="Example: Maple Grove Resident Team" autofocus></label>`:`<div class="answer-grid">${OPTIONS.map(o=>`<button class="answer ${v===o.value?'selected':''}" data-v="${o.value}"><strong>${o.label}</strong><span>${o.helper}</span></button>`).join('')}</div><label class="notes-answer"><span>Comments / notes</span><textarea id="note" placeholder="Add any comments or notes for this question.">${esc(note)}</textarea></label>`}<div class="nav-row"><button class="btn" id="back">Back</button><button class="btn primary" id="next">${step===QUESTIONS.length-1?'See Team State':'Continue'}</button></div>`;
+ if(q.type==='text'){const input=document.getElementById('text');input.focus();input.oninput=()=>answers[q.key]=input.value.trim();input.onkeydown=e=>{if(e.key==='Enter'&&input.value.trim())goNext()}}else{const noteInput=document.getElementById('note');noteInput.oninput=()=>answers[q.key+'Note']=noteInput.value.trim();document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{answers[q.key]=b.dataset.v;if(noteInput)answers[q.key+'Note']=noteInput.value.trim();renderQuestion()})}
+ document.getElementById('back').onclick=()=>{if(q.type!=='text'){const noteInput=document.getElementById('note');if(noteInput)answers[q.key+'Note']=noteInput.value.trim()}if(step===0)renderWelcome();else{step--;renderQuestion()}};document.getElementById('next').onclick=goNext;
+ function goNext(){if(q.type==='text')answers[q.key]=document.getElementById('text').value.trim();else{const noteInput=document.getElementById('note');if(noteInput)answers[q.key+'Note']=noteInput.value.trim()}if(!answers[q.key]){alert('Please answer before continuing.');return}step++;if(step>=QUESTIONS.length)renderResult();else renderQuestion()}}
+function renderResult(){renderChrome();const completedAt=new Date();const id=stateNumber(), tid=tendencyId(), state=TEAM_STATES[tid]||{title:'State not found',description:'No matching tendency was found.'};lastResult={teamName:answers.agency,completedAt:completedAt.toISOString(),stateNumber:id,tendencyId:tid,answers,state};card.className='card';card.innerHTML=`<p class="eyebrow">This is where we are as of ${formatResultDateTime(completedAt)}</p><h1>${esc(state.title)}</h1><h2>${esc(state.description)}</h2><p class="lead"><strong>Teamwork State #${id}</strong></p><div class="result-grid"><div class="result-cell"><span>Care</span><strong>${LABEL[answers.care]}</strong>${answers.careNote?`<p>${esc(answers.careNote)}</p>`:''}</div><div class="result-cell"><span>Pacing</span><strong>${LABEL[answers.pacing]}</strong>${answers.pacingNote?`<p>${esc(answers.pacingNote)}</p>`:''}</div><div class="result-cell"><span>Trust</span><strong>${LABEL[answers.trust]}</strong>${answers.trustNote?`<p>${esc(answers.trustNote)}</p>`:''}</div><div class="result-cell"><span>Alignment</span><strong>${LABEL[answers.alignment]}</strong>${answers.alignmentNote?`<p>${esc(answers.alignmentNote)}</p>`:''}</div></div><div class="button-row"><button class="btn" onclick="window.print()">Print / Save PDF</button><button class="btn primary" id="again">New Team Check</button></div>`;document.getElementById('again').onclick=()=>{answers={};renderWelcome()}}
+renderWelcome();
+</script>
+</body>
+</html>
