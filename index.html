@@ -99,7 +99,45 @@ NoNoNoSometimes,"Still moving, but near collapse.",Continuation brief and unstab
 NoNoNoNo,Nothing feels okay.,People are stressed, disconnected, confused, and exhausted. There is no shared understanding and no path forward.`;
 
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzqSh2q51xFgCJjoFP2TyPypt0uhFJhaolEi9voYNWdHgsLNZsfQzHK14W1fZCKnGIJYA/exec'; // Paste your deployed Google Apps Script Web App URL here after deployment.
+const URL_CONTEXT = (() => {
+  const params = new URLSearchParams(window.location.search);
 
+  const read = (...names) => {
+    for (const name of names) {
+      const value = params.get(name);
+      if (value && value.trim()) return value.trim();
+    }
+    return '';
+  };
+
+  return {
+    eventId: read('event_id', 'eventId', 'EventID'),
+    eventName: read('event_name', 'eventName', 'EventName'),
+    teamId: read('team_id', 'teamId', 'TeamID'),
+    teamName: read('team_name', 'teamName', 'TeamName')
+  };
+})();
+
+function getTeamName() {
+  return URL_CONTEXT.teamName || '';
+}
+
+function contextHeaderHtml() {
+  const team = URL_CONTEXT.teamName || 'Team not specified';
+  const event = URL_CONTEXT.eventName || '';
+  const eventId = URL_CONTEXT.eventId || '';
+  const teamId = URL_CONTEXT.teamId || '';
+
+  const bits = [
+    event ? `<span>Event: ${esc(event)}</span>` : '',
+    eventId ? `<span>Event ID: ${esc(eventId)}</span>` : '',
+    teamId ? `<span>Team ID: ${esc(teamId)}</span>` : ''
+  ].filter(Boolean).join('');
+
+  return `<div class="mini-rhythm"><span>Team: ${esc(team)}</span>${bits}</div>`;
+}
+
+  
 const SCORE={no:0,sometimes:1,yes:2};
 const LABEL={yes:'Yes',sometimes:'Sometimes',no:'No'};
 const TEAM_TYPES=[
@@ -118,7 +156,6 @@ const TEAM_TYPES=[
  'Government Team'
 ];
 const QUESTIONS=[
- {key:'agency',label:'Agency',question:'How are we associating?',helper:'Name the Team, group, association, circle, committee, partnership, or container that is actually in the room.',color:'var(--agency)',type:'text'},
  {key:'care',label:'Care',question:'Is it healthy to be here?',helper:'Notice the conditions shaping participation before asking people to carry more.',color:'var(--care)',type:'choice'},
  {key:'pacing',label:'Pacing',question:'Can this continue?',helper:'Notice capacity, support needs, timing, and whether the current pace can be sustained.',color:'var(--pacing)',type:'choice'},
  {key:'trust',label:'Trust',question:'Are we together?',helper:'Notice connection, belonging, shared participation, and where responsibility may be concentrated.',color:'var(--trust)',type:'choice'},
@@ -129,7 +166,7 @@ const OPTIONS=[
  {value:'sometimes',label:'Sometimes',helper:'This is partly present, uneven, or changing.'},
  {value:'yes',label:'Yes',helper:'This feels present enough to continue.'}
 ];
-let step=-1, answers={}, feedback={teamType:TEAM_TYPES[0],referralScore:5,feedbackReason:''}, lastResult=null, feedbackSubmitted=false;
+let step=-1, answers={agency:getTeamName()}, feedback={teamType:TEAM_TYPES[0],referralScore:5,feedbackReason:''}, lastResult=null, feedbackSubmitted=false;
 const card=document.getElementById('card'), rhythm=document.getElementById('rhythm'), progress=document.getElementById('progress');
 function parseCSV(text){const rows=[];let row=[],cell='',q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cell+='"';i++}else if(c==='"'){q=!q}else if(c===','&&!q){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&n==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=''}else cell+=c}row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows}
 function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
@@ -139,10 +176,10 @@ function tendencyId(){return LABEL[answers.care]+LABEL[answers.trust]+LABEL[answ
 function category(id){if(id>=73)return'Highest Stability';if(id>=55)return'Mixed Stability';if(id>=43)return'Strained but Functioning';if(id>=20)return'Fragile / At Risk';return'Breakdown / Collapse'}
 function formatResultDateTime(date){const mm=String(date.getMonth()+1).padStart(2,'0'),dd=String(date.getDate()).padStart(2,'0'),yyyy=date.getFullYear();let h=date.getHours();const ampm=h>=12?'PM':'AM';h=h%12||12;const min=String(date.getMinutes()).padStart(2,'0');return mm+'/'+dd+'/'+yyyy+' at '+h+':'+min+' '+ampm}
 function renderChrome(){if(step>=0&&step<QUESTIONS.length){progress.textContent=`${step+1}/${QUESTIONS.length}`;rhythm.innerHTML=QUESTIONS.map((q,i)=>`<div class="rhythm-item ${i===step?'active':''}"><span class="dot" style="--color:${q.color}"></span>${q.label}${i<QUESTIONS.length-1?' →':''}</div>`).join('')}else{progress.textContent='';rhythm.innerHTML=''}}
-function resetCheck(){answers={};feedback={teamType:TEAM_TYPES[0],referralScore:5,feedbackReason:''};lastResult=null;feedbackSubmitted=false;renderWelcome()}
+function resetCheck(){answers={agency:getTeamName()};feedback={teamType:TEAM_TYPES[0],referralScore:5,feedbackReason:''};lastResult=null;feedbackSubmitted=false;renderWelcome()}
 function createResponseId(){if(window.crypto&&typeof window.crypto.randomUUID==='function')return window.crypto.randomUUID();return 'qtc-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10)}
-function renderWelcome(){step=-1;renderChrome();card.className='card';card.innerHTML=`<p class="eyebrow">Quick Team Check</p><h1>Quick Team Check</h1><p class="lead">Move through five questions in order. Name the Team, notice conditions, understand capacity, check connection, and clarify coordination.</p><div class="button-row"><button class="btn primary" id="begin">Begin Team Check</button></div>`;document.getElementById('begin').onclick=()=>{step=0;renderQuestion()}}
-function renderQuestion(){const q=QUESTIONS[step];renderChrome();card.className='card question-card';card.style.setProperty('--accent',q.color);const v=answers[q.key]||'', note=answers[q.key+'Note']||'';card.innerHTML=`<p class="eyebrow">${q.label}</p><h1>${esc(q.question)}</h1><p class="lead">${esc(q.helper)}</p>${q.type==='text'?`<label class="text-answer"><span>Team / group / association name</span><input id="text" value="${esc(v)}" placeholder="Example: Maple Grove Resident Team" autofocus></label>`:`<div class="answer-grid">${OPTIONS.map(o=>`
+function renderWelcome(){step=-1;renderChrome();card.className='card';card.innerHTML=`<p class="eyebrow">Quick Team Check</p><h1>Quick Team Check</h1>${contextHeaderHtml()}<p class="lead">Agency is set by the link. Begin with Care, then move through Pacing, Trust, and Alignment.</p><div class="button-row"><button class="btn primary" id="begin">Begin Team Check</button></div>`;document.getElementById('begin').onclick=()=>{step=0;renderQuestion()}}
+function renderQuestion(){const q=QUESTIONS[step];renderChrome();card.className='card question-card';card.style.setProperty('--accent',q.color);const v=answers[q.key]||'', note=answers[q.key+'Note']||'';card.innerHTML=`<p class="eyebrow">${q.label}</p><h1>${esc(q.question)}</h1>${contextHeaderHtml()}<p class="lead">${esc(q.helper)}</p>${q.type==='text'?`<label class="text-answer"><span>Team / group / association name</span><input id="text" value="${esc(v)}" placeholder="Example: Maple Grove Resident Team" autofocus></label>`:`<div class="answer-grid">${OPTIONS.map(o=>`
 <button class="answer ${v===o.value?'selected':''}" data-v="${o.value}">
 <strong>${o.label}</strong>
 </button>`).join('')}</div><label class="notes-answer"><span>Comments / notes</span><textarea id="note" placeholder="Add any comments or notes for this question.">${esc(note)}</textarea></label>`}<div class="nav-row"><button class="btn" id="back">Back</button><button class="btn primary" id="next">${step===QUESTIONS.length-1?'See Team State':'Continue'}</button></div>`;
@@ -153,7 +190,7 @@ function ensureResult(){
   if(lastResult)return lastResult;
   const completedAt=new Date();
   const id=stateNumber(), tid=tendencyId(), state=TEAM_STATES[tid]||{title:'State not found',description:'No matching tendency was found.'};
-  lastResult={responseId:createResponseId(),teamName:answers.agency,completedAt:completedAt.toISOString(),completedAtDisplay:formatResultDateTime(completedAt),stateNumber:id,tendencyId:tid,category:category(id),answers:{...answers},state};
+  lastResult={responseId:createResponseId(),teamName:getTeamName() || answers.agency || '',completedAt:completedAt.toISOString(),completedAtDisplay:formatResultDateTime(completedAt),stateNumber:id,tendencyId:tid,category:category(id),answers:{...answers},state};
   return lastResult
 }
 function resultGridHtml(result){const a=result.answers;return `<div class="result-grid"><div class="result-cell"><span>Care</span><strong>${LABEL[a.care]}</strong>${a.careNote?`<p>${esc(a.careNote)}</p>`:''}</div><div class="result-cell"><span>Pacing</span><strong>${LABEL[a.pacing]}</strong>${a.pacingNote?`<p>${esc(a.pacingNote)}</p>`:''}</div><div class="result-cell"><span>Trust</span><strong>${LABEL[a.trust]}</strong>${a.trustNote?`<p>${esc(a.trustNote)}</p>`:''}</div><div class="result-cell"><span>Alignment</span><strong>${LABEL[a.alignment]}</strong>${a.alignmentNote?`<p>${esc(a.alignmentNote)}</p>`:''}</div></div>`}
@@ -162,7 +199,7 @@ function renderResult(message=''){
   renderChrome();
   const result=ensureResult();
   card.className='card';
-  card.innerHTML=`<p class="eyebrow">This is where we are as of ${result.completedAtDisplay}</p><h1>${esc(result.state.title)}</h1><h2>${esc(result.state.description)}</h2><p class="lead"><strong>Teamwork State #${result.stateNumber}</strong></p>${message?`<div class="status-message">${esc(message)}</div>`:''}${resultGridHtml(result)}<div class="button-row"><button class="btn" id="saveResultsBtn">Save Results</button><button class="btn" id="feedbackBtn">${feedbackSubmitted?'View / Update Feedback':'Submit Feedback'}</button><button class="btn primary" id="again">New Team Check</button></div>`;
+  card.innerHTML=`<p class="eyebrow">This is where we are as of ${result.completedAtDisplay}</p><h1>${esc(result.state.title)}</h1>${contextHeaderHtml()}<h2>${esc(result.state.description)}</h2><p class="lead"><strong>Teamwork State #${result.stateNumber}</strong></p>${message?`<div class="status-message">${esc(message)}</div>`:''}${resultGridHtml(result)}<div class="button-row"><button class="btn" id="saveResultsBtn">Save Results</button><button class="btn" id="feedbackBtn">${feedbackSubmitted?'View / Update Feedback':'Submit Feedback'}</button><button class="btn primary" id="again">New Team Check</button></div>`;
   document.getElementById('saveResultsBtn').onclick=saveResults;
   document.getElementById('feedbackBtn').onclick=renderFeedback;
   document.getElementById('again').onclick=resetCheck
@@ -210,7 +247,7 @@ function renderFeedback(errorMessage=''){step=QUESTIONS.length;renderChrome();co
 }
 function makeSubmissionPayload(sourceAction='submit_feedback'){
   const result=ensureResult(), a=result.answers, includeFeedback=sourceAction==='submit_feedback';
-  return {responseId:result.responseId,sourceAction,savedResults:sourceAction==='save_results',submittedAt:new Date().toISOString(),pageUrl:window.location.href,userAgent:navigator.userAgent,teamName:result.teamName,completedAt:result.completedAt,stateNumber:result.stateNumber,tendencyId:result.tendencyId,category:result.category,stateTitle:result.state.title,stateDescription:result.state.description,answers:{care:LABEL[a.care]||'',careNote:a.careNote||'',pacing:LABEL[a.pacing]||'',pacingNote:a.pacingNote||'',trust:LABEL[a.trust]||'',trustNote:a.trustNote||'',alignment:LABEL[a.alignment]||'',alignmentNote:a.alignmentNote||''},feedback:includeFeedback?{teamType:feedback.teamType||TEAM_TYPES[0],referralScore:Number(feedback.referralScore||5),feedbackReason:feedback.feedbackReason||''}:{}}
+  return {responseId:result.responseId,sourceAction,savedResults:sourceAction==='save_results',submittedAt:new Date().toISOString(),pageUrl:window.location.href,userAgent:navigator.userAgent,eventId:URL_CONTEXT.eventId,eventName:URL_CONTEXT.eventName,teamId:URL_CONTEXT.teamId,teamName:result.teamName,completedAt:result.completedAt,stateNumber:result.stateNumber,tendencyId:result.tendencyId,category:result.category,stateTitle:result.state.title,stateDescription:result.state.description,answers:{care:LABEL[a.care]||'',careNote:a.careNote||'',pacing:LABEL[a.pacing]||'',pacingNote:a.pacingNote||'',trust:LABEL[a.trust]||'',trustNote:a.trustNote||'',alignment:LABEL[a.alignment]||'',alignmentNote:a.alignmentNote||''},feedback:includeFeedback?{teamType:feedback.teamType||TEAM_TYPES[0],referralScore:Number(feedback.referralScore||5),feedbackReason:feedback.feedbackReason||''}:{}}
 }
 async function submitFeedback(){const errorNode=document.getElementById('feedbackError'), submitBtn=document.getElementById('submitFeedback');submitBtn.disabled=true;submitBtn.textContent='Submitting...';try{await sendSubmission('submit_feedback');feedbackSubmitted=true;renderResult('Thank you — your feedback was submitted.')}catch(err){errorNode.style.display='block';errorNode.textContent=(err&&err.message)?err.message:'Submission failed. Please check the Apps Script Web App URL and deployment permissions, then try again.';submitBtn.disabled=false;submitBtn.textContent='Submit'}}
 renderWelcome();
