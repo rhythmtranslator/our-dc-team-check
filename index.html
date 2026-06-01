@@ -124,17 +124,9 @@ function getTeamName() {
 
 function contextHeaderHtml() {
   const team = URL_CONTEXT.teamName || 'Team not specified';
-  const event = URL_CONTEXT.eventName || '';
-  const eventId = URL_CONTEXT.eventId || '';
-  const teamId = URL_CONTEXT.teamId || '';
+  const event = URL_CONTEXT.eventName || 'Quick Team Check';
 
-  const bits = [
-    event ? `<span>Event: ${esc(event)}</span>` : '',
-    eventId ? `<span>Event ID: ${esc(eventId)}</span>` : '',
-    teamId ? `<span>Team ID: ${esc(teamId)}</span>` : ''
-  ].filter(Boolean).join('');
-
-  return `<div class="mini-rhythm"><span>Team: ${esc(team)}</span>${bits}</div>`;
+  return `<div class="mini-rhythm"><span>${esc(event)} hosted by ${esc(team)}</span></div>`;
 }
 
   
